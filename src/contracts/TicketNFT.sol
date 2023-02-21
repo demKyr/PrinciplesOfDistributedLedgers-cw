@@ -9,7 +9,7 @@ contract TicketNFT is ITicketNFT {
     mapping(uint256 => uint256) public expiryTimestamp;
     mapping(uint256 => bool) public ticketUsed;
     mapping(uint256 => address) public approvedOperator;
-    mapping(address => string) public nameOfHolder;
+    mapping(uint256 => string) public nameOfHolder;
     mapping(address => uint256) public balanceOfHolder;
 
 
@@ -26,7 +26,7 @@ contract TicketNFT is ITicketNFT {
         require(msg.sender == primaryMarket, "Only primary market can mint");
         ticketID++;
         holderOfTicket[ticketID] = holder;
-        nameOfHolder[holder] = holderName;
+        nameOfHolder[ticketID] = holderName;
         // NAME OF HOLDER SHOULD BE STORED ON TICKET OR ON ADDRESS
         expiryTimestamp[ticketID] = block.timestamp + 10 * 86400;
         ticketUsed[ticketID] = false;
@@ -66,16 +66,35 @@ contract TicketNFT is ITicketNFT {
         emit Approval(msg.sender, to, ticketID);
     }
 
-    // getApproved
-
-    function holderNameOf(uint256 ticketID) external view override returns (address operator) {
+    function getApproved(uint256 ticketID) external view override returns (address operator) {
         require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
-        return nameOfHolder[holderOfTicket[ticketID]];
+        return approvedOperator[ticketID];
     }
 
-    // updateHolderName
-    // setUsed
-    // isExpiredOrUsed
 
+
+    function holderNameOf(uint256 ticketID) external view override returns (string memory holderName) {
+        require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
+        return nameOfHolder[ticketID];
+    }
+
+    function updateHolderName(uint256 ticketID, string calldata newName) external override{
+        require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
+        require(holderOfTicket[ticketID] == msg.sender, "You are not the holder of this ticket");
+        nameOfHolder[ticketID] = newName;
+    }
+
+    function setUsed(uint256 ticketID) external override{
+        require(msg.sender == primaryMarket, "Only primary market can set ticket as used");
+        require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
+        require(ticketUsed[ticketID] == false,"Ticket already used");
+        require(block.timestamp <= expiryTimestamp[ticketID],"Ticket expired");
+        ticketUsed[ticketID] = true;
+    }
+    
+    function isExpiredOrUsed(uint256 ticketID) external view returns (bool){
+        require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
+        return(block.timestamp <= expiryTimestamp[ticketID] && ticketUsed[ticketID] == false);
+    }
 
 }
