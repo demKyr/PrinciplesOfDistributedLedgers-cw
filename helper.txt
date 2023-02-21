@@ -1,0 +1,33 @@
+event Transfer(address indexed from, address indexed to, uint256 indexed ticketID);
+/// @dev Emitted when `ticketID` ticket is transferred from `from` to `to`.
+event Approval(address indexed holder, address indexed approved, uint256 indexed ticketID);
+// function mint(address holder, string memory holderName) external;
+/// @dev Emitted when `holder` enables `approved` to manage the `ticketID` ticket.
+// function balanceOf(address holder) external view returns (uint256 balance);
+/// @dev Returns the number of tickets a `holder` has.
+// function holderOf(uint256 ticketID) external view returns (address holder);
+/// @dev Returns the address of the holder of the `ticketID` ticket.
+function transferFrom(address from, address to, uint256 ticketID) external;
+/// @dev Transfers `ticketID` ticket from `from` to `to`.
+function approve(address to, uint256 ticketID) external;
+/// @dev Gives permission to `to` to transfer `ticketID` ticket to another account.
+function getApproved(uint256 ticketID) external view returns (address operator);
+/// @dev Returns the account approved for `ticketID` ticket.
+function holderNameOf(uint256 ticketID) external view returns (string memory holderName);
+/// @dev Returns the current `holderName` associated with a `ticketID`.
+function updateHolderName(uint256 ticketID, string calldata newName) external;
+/// @dev Updates the `holderName` associated with a `ticketID`.
+function setUsed(uint256 ticketID) external;
+/// @dev Sets the `used` flag associated with a `ticketID` to `true`
+function isExpiredOrUsed(uint256 ticketID) external view returns (bool);
+/// @dev Returns `true` if the `used` flag associated with a `ticketID` if `true`
+
+
+
+
+
+
+
+
+
+
