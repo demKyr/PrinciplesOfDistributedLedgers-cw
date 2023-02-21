@@ -50,7 +50,7 @@ contract TicketNFT is ITicketNFT {
     {
         require(from != address(0x0), "Invalid 'from' address");
         require(to != address(0x0), "Invalid 'to' address");
-        require(holderOfTicket[ticketID] == from || approvedOperator[ticketID] == from, "You are not the holder of this ticket and you are not authorised to transfer it");
+        require(holderOfTicket[ticketID] == msg.sender || approvedOperator[ticketID] == msg.sender, "You are not the holder of this ticket and you are not authorised to transfer it");
         
         holderOfTicket[ticketID] = to;
         balanceOfHolder[from]--;
