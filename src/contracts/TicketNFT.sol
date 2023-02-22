@@ -72,7 +72,6 @@ contract TicketNFT is ITicketNFT {
     }
 
 
-
     function holderNameOf(uint256 ticketID) external view override returns (string memory holderName) {
         require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
         return nameOfHolder[ticketID];
