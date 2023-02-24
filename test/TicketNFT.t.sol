@@ -106,6 +106,47 @@ contract TicketNFTTest is Test {
 
 // TESTS FOR FAILURES
 
+    function testMintAsNonOwner() public {
+        vm.prank(bob);
+        vm.expectRevert("Only primary market can mint");
+        ticketNFT.mint(alice, "Alice");
+    }
+
+    function testHolderOfInvalidTicket() public {
+        vm.expectRevert("Invalid ticketID");
+        ticketNFT.holderOf(1);
+    }
+
+    function testTransferWithInvalidAdresses() public {
+        vm.expectEmit(true, true, false, true);
+        emit Transfer(address(0), alice, 1);
+        ticketNFT.mint(alice, "Alice");
+        vm.prank(alice);
+        vm.expectRevert("Invalid 'from' address");
+        ticketNFT.transferFrom(address(0x0), bob, 1);
+        vm.prank(alice);
+        vm.expectRevert("Invalid 'to' address");
+        ticketNFT.transferFrom(alice, address(0x0), 1);
+    }
+
+    function testTransferWithoutApproval() public {
+        vm.expectEmit(true, true, false, true);
+        emit Transfer(address(0), alice, 1);
+        ticketNFT.mint(alice, "Alice");
+        vm.prank(bob);
+        vm.expectRevert("You are not the holder of this ticket and you are not authorised to transfer it");
+        ticketNFT.transferFrom(alice, bob, 1);
+    }
+
+    function testApproveAsNonHolder() public {
+        vm.expectEmit(true, true, false, true);
+        emit Transfer(address(0), alice, 1);
+        ticketNFT.mint(alice, "Alice");
+        vm.prank(bob);
+        vm.expectRevert("You are not the holder of this ticket");
+        ticketNFT.approve(bob, 1);
+    }
+
     function testUpdateHolderNameAsNonHolder() public {
         vm.expectEmit(true, true, false, true);
         emit Transfer(address(0), alice, 1);
@@ -115,17 +156,24 @@ contract TicketNFTTest is Test {
         ticketNFT.updateHolderName(1, "Bob");
     }
 
-    // function testInvalidTicketIDandAddresses() public {
-    //     vm.expectEmit(true, true, false, true);
-    //     emit Transfer(address(0), alice, 1);
-    //     ticketNFT.mint(alice, "Alice");
-    //     vm.prank(alice);
-    //     vm.expectRevert("Ticket ID is invalid");
-    //     ticketNFT.updateHolderName(2, "Bob");
-    //     vm.prank(bob);
-    //     vm.expectRevert("You are not the holder of this ticket");
-    //     ticketNFT.updateHolderName(1, "Bob");
-    // }
+    function testSetTicketAsUsedAsNonPrimaryMarket() public {
+        vm.expectEmit(true, true, false, true);
+        emit Transfer(address(0), alice, 1);
+        ticketNFT.mint(alice, "Alice");
+        vm.prank(bob);
+        vm.expectRevert("Only primary market can set ticket as used");
+        ticketNFT.setUsed(1);
+    }
+
+    function testSetTicketAsUsedForUsedTicket() public {
+        vm.expectEmit(true, true, false, true);
+        emit Transfer(address(0), alice, 1);
+        ticketNFT.mint(alice, "Alice");
+        ticketNFT.setUsed(1);
+        vm.expectRevert("Ticket already used");
+        ticketNFT.setUsed(1);
+    }
+
 
 
 
