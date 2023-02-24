@@ -93,7 +93,7 @@ contract TicketNFT is ITicketNFT {
     
     function isExpiredOrUsed(uint256 ticketID) external view returns (bool){
         require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
-        return(block.timestamp <= expiryTimestamp[ticketID] && ticketUsed[ticketID] == false);
+        return(block.timestamp > expiryTimestamp[ticketID] || ticketUsed[ticketID] == true);
     }
 
 }
