@@ -4,7 +4,6 @@ pragma solidity ^0.8.10;
 import "../interfaces/ITicketNFT.sol";
 
 contract TicketNFT is ITicketNFT {
-    address owner;
     uint256 public ticketID;
     mapping(uint256 => address) public holderOfTicket;
     mapping(uint256 => uint256) public expiryTimestamp;
@@ -12,14 +11,11 @@ contract TicketNFT is ITicketNFT {
     mapping(uint256 => address) public approvedOperator;
     mapping(uint256 => string) public nameOfHolder;
     mapping(address => uint256) public balanceOfHolder;
-
-
     address public primaryMarket;
 
     constructor() {
-        owner = msg.sender;
+        primaryMarket = msg.sender;
         ticketID = 0;
-        // primaryMarket = _primaryMarket;
     }
 
     function mint(address holder, string memory holderName)
