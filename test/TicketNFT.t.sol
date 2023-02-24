@@ -23,7 +23,7 @@ contract TicketNFTTest is Test {
     address public charlie = makeAddr("charlie");
 
     function setUp() public {
-        ticketNFT = new TicketNFT(address(this));
+        ticketNFT = new TicketNFT();
     }
 
 // TESTS FOR SUCCESS
