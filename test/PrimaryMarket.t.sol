@@ -45,21 +45,17 @@ contract PrimaryMarketTest is Test {
         // Check that Alice has no ERC20 tokens and no NFTs
         assertEq(purchaseToken.balanceOf(alice), 0);
         assertEq(ticketNFT.balanceOf(alice), 0);
-
         // Alice mints her own ERC20 tokens
         vm.deal(alice,1 ether);
         vm.prank(alice);
         purchaseToken.mint{value: 1 ether}();
-
         // Check Alice's balance in ERC20 tokens
         assertEq(purchaseToken.balanceOf(alice), 1*100e18);
-
         // Alice approves the PrimaryMarket contract to spend her ERC20 tokens
         assertEq(purchaseToken.allowance(alice, primaryMarketAddress), 0);
         vm.prank(alice);
         purchaseToken.approve(primaryMarketAddress, 100e18);
         assertEq(purchaseToken.allowance(alice, primaryMarketAddress), 100e18);
-
         // Alice purchases a ticket
         vm.expectEmit(true, true, false, true);
         emit Purchase(alice, "Alice");
