@@ -9,7 +9,6 @@ import "./PurchaseToken.sol";
 
 
 contract PrimaryMarket is IPrimaryMarket {
-    event Log(string message, address value);
     
     address public primaryMarket;
     uint256 public ticketPrice;
@@ -36,15 +35,9 @@ contract PrimaryMarket is IPrimaryMarket {
     }
 
     function purchase(string memory holderName) external override {
-        emit Log("address(this)", address(this));
-        emit Log("msg.sender", msg.sender);
-        emit Log("primaryMarket", primaryMarket);
-        emit Log("purchaseTokenContract", address(purchaseTokenContract));
-        emit Log("ticketNFTContract", address(ticketNFTContract));
         // check if msg.sender has enough purchaseToken
         require(purchaseTokenContract.balanceOf(msg.sender) >= ticketPrice, "You do not have enough purchaseToken to purchase a ticket");
         // check if msg.sender has approved primaryMarket to spend purchaseToken
-        // require(purchaseTokenContract.allowance(msg.sender, primaryMarket) >= ticketPrice, "You have not approved primaryMarket to spend your purchaseToken");
         require(purchaseTokenContract.allowance(msg.sender, address(this)) >= ticketPrice, "You have not approved primaryMarket to spend your purchaseToken");
         // check total number of issued tickets to be less than 1000
         require(issuedTicketNFTs < 1000, "All tickets have been sold");

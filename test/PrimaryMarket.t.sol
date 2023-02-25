@@ -63,6 +63,7 @@ contract PrimaryMarketTest is Test {
         primaryMarket.purchase("Alice");
         // Check that Alice has 1 NFT and 0 ERC20 tokens
         assertEq(ticketNFT.balanceOf(alice), 1);
+        assertEq(ticketNFT.holderOf(1), alice);
         assertEq(purchaseToken.balanceOf(alice), 0);
     }
 
