@@ -299,4 +299,69 @@ contract SecondaryMarketTest is Test {
         secondaryMarket.purchase(1, "Bob");
     }
 
+// FINAL TEST
+    function testFinal() public{
+        // Alice buys two ticketNFTs
+        vm.deal(alice,2 ether);
+        vm.prank(alice);
+        purchaseToken.mint{value: 2 ether}();
+        vm.prank(alice);
+        purchaseToken.approve(primaryMarketAddress, 200e18);
+        vm.prank(alice);
+        primaryMarket.purchase("Alice");
+        vm.prank(alice);
+        primaryMarket.purchase("Alice");
+        assertEq(ticketNFT.holderOf(1), alice);
+        assertEq(ticketNFT.holderOf(2), alice);
+        // Alice lists the ticketNFTs
+        vm.prank(alice);
+        ticketNFT.approve(secondaryMarketAddress, 1);
+        vm.prank(alice);
+        ticketNFT.approve(secondaryMarketAddress, 2);
+        vm.prank(alice);
+        secondaryMarket.listTicket(1, 10e18);
+        vm.prank(alice);
+        secondaryMarket.listTicket(2, 10e18);
+        // Bob buys the ticketNFTs
+        vm.deal(bob, 0.2 ether);
+        vm.prank(bob);
+        purchaseToken.mint{value: 0.2 ether}();
+        vm.prank(bob);
+        purchaseToken.approve(secondaryMarketAddress, 20e18);
+        vm.prank(bob);
+        secondaryMarket.purchase(1, "Bob");
+        vm.prank(bob);
+        secondaryMarket.purchase(2, "Bob");
+        assertEq(ticketNFT.holderOf(1), bob);
+        assertEq(ticketNFT.holderOf(2), bob);
+        // Bob lists the ticketNFTs
+        vm.prank(bob);
+        ticketNFT.approve(secondaryMarketAddress, 1);
+        vm.prank(bob);
+        ticketNFT.approve(secondaryMarketAddress, 2);
+        vm.prank(bob);
+        secondaryMarket.listTicket(1, 10e18);
+        vm.prank(bob);
+        secondaryMarket.listTicket(2, 10e18);
+        // Alice buys the ticketNFTs
+        vm.deal(alice, 0.2 ether);
+        vm.prank(alice);
+        purchaseToken.mint{value: 0.2 ether}();
+        vm.prank(alice);
+        purchaseToken.approve(secondaryMarketAddress, 20e18);
+        vm.prank(alice);
+        secondaryMarket.purchase(1, "Alice");
+        vm.prank(alice);
+        secondaryMarket.purchase(2, "Alice");
+        // Check that the ticketNFTs are owned by Alice
+        assertEq(ticketNFT.holderOf(1), alice);
+        assertEq(ticketNFT.holderOf(2), alice);
+        assertEq(ticketNFT.balanceOf(bob), 0);
+        // Check that final balances are correct
+        assertEq(purchaseToken.balanceOf(bob), 2 * 9.5 * 1e18);
+        assertEq(purchaseToken.balanceOf(alice), 2 * 9.5 * 1e18);
+        assertEq(purchaseToken.balanceOf(owner), 4 * 0.5 * 1e18 + 2 * 100 * 1e18);
+
+    }
+
 }
