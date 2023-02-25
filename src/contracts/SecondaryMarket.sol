@@ -11,9 +11,9 @@ import "./PrimaryMarket.sol";
 
 contract SecondaryMarket is ISecondaryMarket {
 
-    mapping(uint256 => address) public ticketListOriginator;
-    mapping(uint256 => uint256) public ticketListPrice;
-    mapping(uint256 => bool) public ticketListListed;
+    mapping(uint256 => address) private ticketListOriginator;
+    mapping(uint256 => uint256) private ticketListPrice;
+    mapping(uint256 => bool) private ticketListListed;
 
     IPrimaryMarket public primaryMarketContract;
     IERC20 public purchaseTokenContract;

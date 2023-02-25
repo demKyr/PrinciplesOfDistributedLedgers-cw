@@ -10,20 +10,14 @@ import "./PurchaseToken.sol";
 
 contract PrimaryMarket is IPrimaryMarket {
     
-    address public primaryMarket;
-    uint256 public ticketPrice;
-    uint256 public issuedTicketNFTs;
-    // TicketNFT public ticketNFTContract;
-    // PurchaseToken public purchaseTokenContract;
+    address private primaryMarket;
+    uint256 private ticketPrice;
+    uint256 private issuedTicketNFTs;
     ITicketNFT public ticketNFTContract;
     IERC20 public purchaseTokenContract;
 
-    // constructor(PurchaseToken _purchaseTokenContract) {
     constructor(address purchaseTokenContractAddress) {
         purchaseTokenContract = IERC20(purchaseTokenContractAddress);
-        // ticketNFTContract = new TicketNFT();
-        // purchaseTokenContract = _purchaseTokenContract;
-        // purchaseTokenContract = PurchaseToken(purchaseTokenContractAddress);
         ticketNFTContract = new TicketNFT();
         primaryMarket = msg.sender;
         ticketPrice = 100e18;

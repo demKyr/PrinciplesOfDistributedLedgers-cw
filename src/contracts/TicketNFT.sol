@@ -4,14 +4,14 @@ pragma solidity ^0.8.10;
 import "../interfaces/ITicketNFT.sol";
 
 contract TicketNFT is ITicketNFT {
-    uint256 public ticketID;
-    mapping(uint256 => address) public holderOfTicket;
-    mapping(uint256 => uint256) public expiryTimestamp;
-    mapping(uint256 => bool) public ticketUsed;
-    mapping(uint256 => address) public approvedOperator;
-    mapping(uint256 => string) public nameOfHolder;
-    mapping(address => uint256) public balanceOfHolder;
-    address public primaryMarket;
+    uint256 private ticketID;
+    mapping(uint256 => address) private holderOfTicket;
+    mapping(uint256 => uint256) private expiryTimestamp;
+    mapping(uint256 => bool) private ticketUsed;
+    mapping(uint256 => address) private approvedOperator;
+    mapping(uint256 => string) private nameOfHolder;
+    mapping(address => uint256) private balanceOfHolder;
+    address private primaryMarket;
 
     constructor() {
         primaryMarket = msg.sender;
