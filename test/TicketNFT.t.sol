@@ -174,6 +174,15 @@ contract TicketNFTTest is Test {
         ticketNFT.setUsed(1);
     }
 
+    function testSetTicketAsUsedForExpiredTicket() public {
+        vm.expectEmit(true, true, false, true);
+        emit Transfer(address(0), alice, 1);
+        ticketNFT.mint(alice, "Alice");
+        vm.warp(1977361197);
+        vm.expectRevert("Ticket expired");
+        ticketNFT.setUsed(1);
+    }
+
 
 
 
