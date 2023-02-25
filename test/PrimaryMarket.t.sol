@@ -37,6 +37,8 @@ contract PrimaryMarketTest is Test {
         primaryMarketAddress = address(primaryMarket);
     }
 
+// TESTS FOR SUCCESS
+
     function testAdmin() public {
         assertEq(primaryMarket.admin(), owner);
     }
@@ -65,6 +67,53 @@ contract PrimaryMarketTest is Test {
         assertEq(ticketNFT.balanceOf(alice), 1);
         assertEq(ticketNFT.holderOf(1), alice);
         assertEq(purchaseToken.balanceOf(alice), 0);
+    }
+
+// TESTS FOR FAILURES
+
+    function testPurchaseWithoutSufficientFunds() public{
+        // Alice tries to buy a ticketNFT with insufficient funds
+        vm.deal(alice,1 ether);
+        vm.prank(alice);
+        purchaseToken.mint{value: 0.5 ether}();
+        vm.prank(alice);
+        purchaseToken.approve(primaryMarketAddress, 100e18);
+        vm.prank(alice);
+        vm.expectRevert("You do not have enough purchaseToken to purchase a ticket");
+        primaryMarket.purchase("Alice");
+    }
+
+    function testPurchaseWithoutApproval() public{
+        // Alice tries to buy a ticketNFT without approval
+        vm.deal(alice,1 ether);
+        vm.prank(alice);
+        purchaseToken.mint{value: 1 ether}();
+        vm.prank(alice);
+        vm.expectRevert("You have not approved primaryMarket to spend your purchaseToken");
+        primaryMarket.purchase("Alice");
+    }
+
+    function testPurchaseAfterSoldout() public{
+        // Alice buys a ticketNFT
+        vm.deal(alice,1000 ether);
+        vm.prank(alice);
+        purchaseToken.mint{value: 1000 ether}();
+        for(uint i = 0; i < 1000; i++){
+            vm.prank(alice);
+            purchaseToken.approve(primaryMarketAddress, 100e18);
+            vm.prank(alice);
+            primaryMarket.purchase("Alice");
+        }
+        assertEq(ticketNFT.balanceOf(alice), 1000);
+        // Bob tries to buy a ticketNFT after the sale is sold out
+        vm.deal(bob,1 ether);
+        vm.prank(bob);
+        purchaseToken.mint{value: 1 ether}();
+        vm.prank(bob);
+        purchaseToken.approve(primaryMarketAddress, 100e18);
+        vm.prank(bob);
+        vm.expectRevert("All tickets have been sold");
+        primaryMarket.purchase("Bob");
     }
 
 }
