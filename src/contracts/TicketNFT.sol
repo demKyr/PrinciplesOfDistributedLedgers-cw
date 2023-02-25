@@ -38,61 +38,61 @@ contract TicketNFT is ITicketNFT {
         return balanceOfHolder[holder];
     }
 
-    function holderOf(uint256 ticketID) external view override returns (address holder) {
-        require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
-        return holderOfTicket[ticketID];
+    function holderOf(uint256 _ticketID) external view override returns (address holder) {
+        require(holderOfTicket[_ticketID] != address(0x0), "Invalid ticketID");
+        return holderOfTicket[_ticketID];
     }
 
-    function transferFrom(address from, address to, uint256 ticketID)
+    function transferFrom(address from, address to, uint256 _ticketID)
         external
         override
     {
         require(from != address(0x0), "Invalid 'from' address");
         require(to != address(0x0), "Invalid 'to' address");
-        require(holderOfTicket[ticketID] == msg.sender || approvedOperator[ticketID] == msg.sender, "You are not the holder of this ticket and you are not authorised to transfer it");
+        require(holderOfTicket[_ticketID] == msg.sender || approvedOperator[_ticketID] == msg.sender, "You are not the holder of this ticket and you are not authorised to transfer it");
         
-        holderOfTicket[ticketID] = to;
+        holderOfTicket[_ticketID] = to;
         balanceOfHolder[from]--;
         balanceOfHolder[to]++;
-        approvedOperator[ticketID] = address(0x0);
-        emit Transfer(from, to, ticketID);
+        approvedOperator[_ticketID] = address(0x0);
+        emit Transfer(from, to, _ticketID);
     }
 
-    function approve(address to, uint256 ticketID) external override {
-        require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
-        require(holderOfTicket[ticketID] == msg.sender, "You are not the holder of this ticket");
-        approvedOperator[ticketID] = to;
-        emit Approval(msg.sender, to, ticketID);
+    function approve(address to, uint256 _ticketID) external override {
+        require(holderOfTicket[_ticketID] != address(0x0), "Invalid ticketID");
+        require(holderOfTicket[_ticketID] == msg.sender, "You are not the holder of this ticket");
+        approvedOperator[_ticketID] = to;
+        emit Approval(msg.sender, to, _ticketID);
     }
 
-    function getApproved(uint256 ticketID) external view override returns (address operator) {
-        require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
-        return approvedOperator[ticketID];
+    function getApproved(uint256 _ticketID) external view override returns (address operator) {
+        require(holderOfTicket[_ticketID] != address(0x0), "Invalid ticketID");
+        return approvedOperator[_ticketID];
     }
 
 
-    function holderNameOf(uint256 ticketID) external view override returns (string memory holderName) {
-        require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
-        return nameOfHolder[ticketID];
+    function holderNameOf(uint256 _ticketID) external view override returns (string memory holderName) {
+        require(holderOfTicket[_ticketID] != address(0x0), "Invalid ticketID");
+        return nameOfHolder[_ticketID];
     }
 
-    function updateHolderName(uint256 ticketID, string calldata newName) external override{
-        require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
-        require(holderOfTicket[ticketID] == msg.sender, "You are not the holder of this ticket");
-        nameOfHolder[ticketID] = newName;
+    function updateHolderName(uint256 _ticketID, string calldata newName) external override{
+        require(holderOfTicket[_ticketID] != address(0x0), "Invalid ticketID");
+        require(holderOfTicket[_ticketID] == msg.sender, "You are not the holder of this ticket");
+        nameOfHolder[_ticketID] = newName;
     }
 
-    function setUsed(uint256 ticketID) external override{
+    function setUsed(uint256 _ticketID) external override{
         require(msg.sender == primaryMarket, "Only primary market can set ticket as used");
-        require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
-        require(ticketUsed[ticketID] == false,"Ticket already used");
-        require(block.timestamp <= expiryTimestamp[ticketID],"Ticket expired");
-        ticketUsed[ticketID] = true;
+        require(holderOfTicket[_ticketID] != address(0x0), "Invalid ticketID");
+        require(ticketUsed[_ticketID] == false,"Ticket already used");
+        require(block.timestamp <= expiryTimestamp[_ticketID],"Ticket expired");
+        ticketUsed[_ticketID] = true;
     }
     
-    function isExpiredOrUsed(uint256 ticketID) external view returns (bool){
-        require(holderOfTicket[ticketID] != address(0x0), "Invalid ticketID");
-        return(block.timestamp > expiryTimestamp[ticketID] || ticketUsed[ticketID] == true);
+    function isExpiredOrUsed(uint256 _ticketID) external view returns (bool){
+        require(holderOfTicket[_ticketID] != address(0x0), "Invalid ticketID");
+        return(block.timestamp > expiryTimestamp[_ticketID] || ticketUsed[_ticketID] == true);
     }
 
 }
