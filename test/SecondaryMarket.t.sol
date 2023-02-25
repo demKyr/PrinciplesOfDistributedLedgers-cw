@@ -53,7 +53,7 @@ contract SecondaryMarketTest is Test {
         // Alice lists the ticketNFT
         vm.prank(alice);
         ticketNFT.approve(secondaryMarketAddress, 1);
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Listing(1, alice, 10e18);
         vm.prank(alice);
         secondaryMarket.listTicket(1, 10e18);
@@ -76,7 +76,7 @@ contract SecondaryMarketTest is Test {
         vm.prank(alice);
         ticketNFT.approve(secondaryMarketAddress, 1);
         vm.prank(alice);
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Listing(1, alice, 10e18);
         secondaryMarket.listTicket(1, 10e18);
         // Alice is no longer the holder of the ticketNFT
@@ -94,7 +94,7 @@ contract SecondaryMarketTest is Test {
         vm.prank(alice);
         ticketNFT.approve(secondaryMarketAddress, 1);
         vm.prank(alice);
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Listing(1, alice, 10e18);
         secondaryMarket.listTicket(1, 10e18);
         // Alice is again no longer the holder of the ticketNFT
@@ -127,6 +127,8 @@ contract SecondaryMarketTest is Test {
         vm.prank(bob);
         purchaseToken.approve(secondaryMarketAddress, 10 * 1e18);
         vm.prank(bob);
+        vm.expectEmit(true, true, true, true);
+        emit Purchase(bob, 1, 10e18, "Bob");
         secondaryMarket.purchase(1, "Bob");
         // Bob is the holder of the ticketNFT
         assertEq(ticketNFT.holderOf(1), bob);

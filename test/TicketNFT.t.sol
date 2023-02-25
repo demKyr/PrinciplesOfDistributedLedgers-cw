@@ -30,7 +30,7 @@ contract TicketNFTTest is Test {
 
     function testMint() public {
         assertEq(ticketNFT.balanceOf(alice), 0);
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         assertEq(ticketNFT.balanceOf(alice), 1);
@@ -38,11 +38,11 @@ contract TicketNFTTest is Test {
     }
 
     function testTransfer() public {
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         vm.prank(alice);
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(alice, bob, 1);
         ticketNFT.transferFrom(alice, bob, 1);
         assertEq(ticketNFT.balanceOf(alice), 0);
@@ -50,17 +50,17 @@ contract TicketNFTTest is Test {
     }
 
     function testApprovedTransfer() public {
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         assertEq(ticketNFT.holderOf(1), alice);
         vm.prank(alice);
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Approval(alice, bob, 1);
         ticketNFT.approve(bob, 1);
         assertEq(ticketNFT.getApproved(1), bob);
         vm.prank(bob);
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(alice, charlie, 1);
         ticketNFT.transferFrom(alice, charlie, 1);
         assertEq(ticketNFT.balanceOf(alice), 0);
@@ -68,7 +68,7 @@ contract TicketNFTTest is Test {
     }
 
     function testUpdateHolderName() public {
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         assertEq(ticketNFT.holderNameOf(1), "Alice");
@@ -78,15 +78,15 @@ contract TicketNFTTest is Test {
     }
 
     function testUpdateHolderAfterSelfTransferingTicketWithApproval() public {
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         vm.prank(alice);
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Approval(alice, bob, 1);
         ticketNFT.approve(bob, 1);
         vm.prank(bob);
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(alice, bob, 1);
         ticketNFT.transferFrom(alice, bob, 1);
         assertEq(ticketNFT.holderOf(1), bob);
@@ -96,7 +96,7 @@ contract TicketNFTTest is Test {
     }
 
     function testSetTicketToUsed() public{
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         assertEq(ticketNFT.isExpiredOrUsed(1), false);
@@ -118,7 +118,7 @@ contract TicketNFTTest is Test {
     }
 
     function testTransferWithInvalidAdresses() public {
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         vm.prank(alice);
@@ -130,7 +130,7 @@ contract TicketNFTTest is Test {
     }
 
     function testTransferWithoutApproval() public {
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         vm.prank(bob);
@@ -139,7 +139,7 @@ contract TicketNFTTest is Test {
     }
 
     function testApproveAsNonHolder() public {
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         vm.prank(bob);
@@ -148,7 +148,7 @@ contract TicketNFTTest is Test {
     }
 
     function testUpdateHolderNameAsNonHolder() public {
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         vm.prank(bob);
@@ -157,7 +157,7 @@ contract TicketNFTTest is Test {
     }
 
     function testSetTicketAsUsedAsNonPrimaryMarket() public {
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         vm.prank(bob);
@@ -166,7 +166,7 @@ contract TicketNFTTest is Test {
     }
 
     function testSetTicketAsUsedForUsedTicket() public {
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         ticketNFT.setUsed(1);
@@ -175,7 +175,7 @@ contract TicketNFTTest is Test {
     }
 
     function testSetTicketAsUsedForExpiredTicket() public {
-        vm.expectEmit(true, true, false, true);
+        vm.expectEmit(true, true, true, true);
         emit Transfer(address(0), alice, 1);
         ticketNFT.mint(alice, "Alice");
         vm.warp(1977361197);

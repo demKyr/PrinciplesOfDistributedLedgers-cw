@@ -53,13 +53,14 @@ contract SecondaryMarket is ISecondaryMarket {
         ticketNFTContract.updateHolderName(_ticketID, _name);
         ticketNFTContract.transferFrom(address(this), msg.sender, _ticketID);
 
+        // emit event
+        emit Purchase(msg.sender, _ticketID, ticketListPrice[_ticketID],  _name);
+        
         // Delist ticketNFT
         ticketListListed[_ticketID] = false;
         ticketListPrice[_ticketID] = 0;
         ticketListOriginator[_ticketID] = address(0);
 
-        // emit event
-        emit Purchase(msg.sender, _ticketID, ticketListPrice[_ticketID],  _name);
 
     }
 
