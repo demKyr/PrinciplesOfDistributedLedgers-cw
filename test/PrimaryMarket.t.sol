@@ -46,14 +46,10 @@ contract PrimaryMarketTest is Test {
         assertEq(purchaseToken.balanceOf(alice), 0);
         assertEq(ticketNFT.balanceOf(alice), 0);
 
-        // "Give Alice some ERC20 tokens" - Alice should mint her own ERC20 tokens using ETH but the following lines are commented out because it is not working
-        purchaseToken.mint{value: 10 ether}();
-        assertEq(purchaseToken.balanceOf(address(this)), 10 * 100e18 );
-        purchaseToken.transfer(alice, 100e18);
-
         // Alice mints her own ERC20 tokens
-        // vm.prank(alice);
-        // purchaseToken.mint{value: 1 ether}();
+        vm.deal(alice,1 ether);
+        vm.prank(alice);
+        purchaseToken.mint{value: 1 ether}();
 
         // Check Alice's balance in ERC20 tokens
         assertEq(purchaseToken.balanceOf(alice), 1*100e18);
