@@ -35,22 +35,12 @@ contract PrimaryMarket is IPrimaryMarket {
         require(purchaseTokenContract.allowance(msg.sender, address(this)) >= ticketPrice, "You have not approved primaryMarket to spend your purchaseToken");
         // check total number of issued tickets to be less than 1000
         require(issuedTicketNFTs < 1000, "All tickets have been sold");
-        // transfers funds to owner from 
+        // transfers funds to Primary Market owner from msg.sender 
         purchaseTokenContract.transferFrom(msg.sender, primaryMarket, ticketPrice);
         issuedTicketNFTs++;
         // mints ticketNFT to msg.sender
         ticketNFTContract.mint(msg.sender, holderName);
         emit Purchase(msg.sender, holderName);
     }
-
-    function returnMsgsender() external view returns (address) {
-        return msg.sender;
-    }
-    // costs ticketPrice
-    // 
-
-
-
-
 
 }

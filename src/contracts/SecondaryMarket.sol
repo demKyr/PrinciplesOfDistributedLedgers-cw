@@ -19,14 +19,10 @@ contract SecondaryMarket is ISecondaryMarket {
     IERC20 public purchaseTokenContract;
     ITicketNFT public ticketNFTContract;
 
-    // constructor(address _primaryMarketAddress) {
     constructor(address _purchaseTokenAddress, address _primaryMarketAddress, address _ticketNFTAddress) {
         purchaseTokenContract = IERC20(_purchaseTokenAddress);
         ticketNFTContract = ITicketNFT(_ticketNFTAddress);
         primaryMarketContract = IPrimaryMarket(_primaryMarketAddress);
-        // purchaseTokenContract = PurchaseToken(address(primaryMarketContract.purchaseToken()));
-        // ticketNFTContract = TicketNFT(address(primaryMarketContract.ticketNFTContract()));
-        
     }
 
     function listTicket(uint256 _ticketId, uint256 _price) external override {

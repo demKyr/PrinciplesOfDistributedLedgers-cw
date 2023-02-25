@@ -13,16 +13,11 @@ contract PrimaryMarketTest is Test {
     PrimaryMarket public primaryMarket;
     PurchaseToken public purchaseToken;
     TicketNFT public ticketNFT;
-    // address public owner = makeAddr("owner");
     address public owner;
     address public primaryMarketAddress;
     address public alice = makeAddr("alice");
     address public bob = makeAddr("bob");
     address public charlie = makeAddr("charlie");
-    // create a new account with 100 ether
-    // address alice = address(new Account(100 ether));
-    // add funds to Alice's account
-    // payable(alice).transfer(100 ether);
 
     function setUp() public {
         owner = address(this);
@@ -32,7 +27,6 @@ contract PrimaryMarketTest is Test {
         primaryMarket = new PrimaryMarket(address(purchaseToken));
         // Store the Ticket NFT contract that was deployed by the constructor of PrimaryMarket contract
         ticketNFT = TicketNFT(address(primaryMarket.ticketNFTContract()));
-
         // Save the address of the PrimaryMarket contract (different from the owner/Primary Market)
         primaryMarketAddress = address(primaryMarket);
     }

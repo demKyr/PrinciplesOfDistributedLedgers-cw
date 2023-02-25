@@ -409,7 +409,6 @@ contract SecondaryMarketTest is Test {
         assertEq(purchaseToken.balanceOf(bob), 2 * 9.5 * 1e18);
         assertEq(purchaseToken.balanceOf(alice), 2 * 9.5 * 1e18);
         assertEq(purchaseToken.balanceOf(owner), 4 * 0.5 * 1e18 + 2 * 100 * 1e18);
-
     }
 
 }

@@ -26,7 +26,6 @@ contract TicketNFT is ITicketNFT {
         ticketID++;
         holderOfTicket[ticketID] = holder;
         nameOfHolder[ticketID] = holderName;
-        // NAME OF HOLDER SHOULD BE STORED ON TICKET OR ON ADDRESS
         expiryTimestamp[ticketID] = block.timestamp + 10 * 86400;
         ticketUsed[ticketID] = false;
         approvedOperator[ticketID] = address(0x0);
