@@ -224,4 +224,79 @@ contract SecondaryMarketTest is Test {
         secondaryMarket.delistTicket(1);
     }
 
+    function testPurchaseNonListedTicket() public{
+        // Alice buys a ticketNFT
+        vm.deal(alice,1 ether);
+        vm.prank(alice);
+        purchaseToken.mint{value: 1 ether}();
+        vm.prank(alice);
+        purchaseToken.approve(primaryMarketAddress, 100e18);
+        vm.prank(alice);
+        primaryMarket.purchase("Alice");
+        assertEq(ticketNFT.holderOf(1), alice);
+        // Bob tries to buy the ticketNFT
+        vm.deal(bob, 0.1 ether);
+        vm.prank(bob);
+        purchaseToken.mint{value: 0.1 ether}();
+        vm.prank(bob);
+        purchaseToken.approve(secondaryMarketAddress, 10e18);
+        vm.prank(bob);
+        vm.expectRevert("Ticket is not listed");
+        secondaryMarket.purchase(1, "Bob");
+    }
+
+    function testPurchaseUsedTicket() public{
+        // Alice buys a ticketNFT
+        vm.deal(alice,1 ether);
+        vm.prank(alice);
+        purchaseToken.mint{value: 1 ether}();
+        vm.prank(alice);
+        purchaseToken.approve(primaryMarketAddress, 100e18);
+        vm.prank(alice);
+        primaryMarket.purchase("Alice");
+        assertEq(ticketNFT.holderOf(1), alice);
+        // Alice lists the ticketNFT
+        vm.prank(alice);
+        ticketNFT.approve(secondaryMarketAddress, 1);
+        vm.prank(alice);
+        secondaryMarket.listTicket(1, 10e18);
+        // Ticket is set as used
+        vm.prank(primaryMarketAddress);
+        ticketNFT.setUsed(1);
+        assertEq(ticketNFT.isExpiredOrUsed(1), true);
+        // Bob tries to buy the ticketNFT
+        vm.deal(bob, 0.1 ether);
+        vm.prank(bob);
+        purchaseToken.mint{value: 0.1 ether}();
+        vm.prank(bob);
+        purchaseToken.approve(secondaryMarketAddress, 10e18);
+        vm.prank(bob);
+        vm.expectRevert("Ticket is expired or used");
+        secondaryMarket.purchase(1, "Bob");
+    }
+
+    function testPurchaseWithoutApproval() public{
+        // Alice buys a ticketNFT
+        vm.deal(alice,1 ether);
+        vm.prank(alice);
+        purchaseToken.mint{value: 1 ether}();
+        vm.prank(alice);
+        purchaseToken.approve(primaryMarketAddress, 100e18);
+        vm.prank(alice);
+        primaryMarket.purchase("Alice");
+        assertEq(ticketNFT.holderOf(1), alice);
+        // Alice lists the ticketNFT
+        vm.prank(alice);
+        ticketNFT.approve(secondaryMarketAddress, 1);
+        vm.prank(alice);
+        secondaryMarket.listTicket(1, 10e18);
+        // Bob tries to buy the ticketNFT
+        vm.deal(bob, 0.1 ether);
+        vm.prank(bob);
+        purchaseToken.mint{value: 0.1 ether}();
+        vm.prank(bob);
+        vm.expectRevert("You have not approved primaryMarket to spend your purchaseToken");
+        secondaryMarket.purchase(1, "Bob");
+    }
+
 }
