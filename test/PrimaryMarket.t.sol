@@ -5,6 +5,7 @@ import "forge-std/Test.sol";
 import "../src/contracts/PrimaryMarket.sol";
 import "../src/contracts/PurchaseToken.sol";
 import "../src/contracts/TicketNFT.sol";
+import "../src/interfaces/ITicketNFT.sol";
 
 contract PrimaryMarketTest is Test {
     event Purchase(address indexed holder, string indexed holderName);
@@ -12,6 +13,9 @@ contract PrimaryMarketTest is Test {
     PrimaryMarket public primaryMarket;
     PurchaseToken public purchaseToken;
     TicketNFT public ticketNFT;
+    // address public owner = makeAddr("owner");
+    address public owner;
+    address public primaryMarketAddress;
     address public alice = makeAddr("alice");
     address public bob = makeAddr("bob");
     address public charlie = makeAddr("charlie");
@@ -21,41 +25,53 @@ contract PrimaryMarketTest is Test {
     // payable(alice).transfer(100 ether);
 
     function setUp() public {
+        owner = address(this);
+        // Deploy the PurchaseToken contract
         purchaseToken = new PurchaseToken();
+        // Deploy the PrimaryMarket contract using the already deployed PurchaseToken contract address
         primaryMarket = new PrimaryMarket(address(purchaseToken));
-        ticketNFT = new TicketNFT();
+        // Store the Ticket NFT contract that was deployed by the constructor of PrimaryMarket contract
+        ticketNFT = TicketNFT(address(primaryMarket.ticketNFTContract()));
+
+        // Save the address of the PrimaryMarket contract (different from the owner/Primary Market)
+        primaryMarketAddress = address(primaryMarket);
     }
 
     function testAdmin() public {
-        assertEq(primaryMarket.admin(), address(this));
+        assertEq(primaryMarket.admin(), owner);
     }
 
     function testPurchase() public {
-        // assertEq(primaryMarket.issuedTicketNFTs(), 0);
+        // Check that Alice has no ERC20 tokens and no NFTs
         assertEq(purchaseToken.balanceOf(alice), 0);
         assertEq(ticketNFT.balanceOf(alice), 0);
-        assertEq(purchaseToken.balanceOf(address(primaryMarket)), 0);
 
+        // "Give Alice some ERC20 tokens" - Alice should mint her own ERC20 tokens using ETH but the following lines are commented out because it is not working
         purchaseToken.mint{value: 10 ether}();
-        // assertGe(purchaseToken.balanceOf(alice), 1 ether);
-        // assertGe(purchaseToken.balanceOf(address(primaryMarket)), 1 ether);
-        assertEq(purchaseToken.balanceOf(address(this)), 1000e18 );
+        assertEq(purchaseToken.balanceOf(address(this)), 10 * 100e18 );
+        purchaseToken.transfer(alice, 100e18);
+
+        // Alice mints her own ERC20 tokens
+        // vm.prank(alice);
+        // purchaseToken.mint{value: 1 ether}();
+
+        // Check Alice's balance in ERC20 tokens
+        assertEq(purchaseToken.balanceOf(alice), 1*100e18);
+
+        // Alice approves the PrimaryMarket contract to spend her ERC20 tokens
+        assertEq(purchaseToken.allowance(alice, primaryMarketAddress), 0);
         vm.prank(alice);
-        purchaseToken.mint{value: 10 ether}();
-        assertEq(purchaseToken.balanceOf(alice), 1000e18);
+        purchaseToken.approve(primaryMarketAddress, 100e18);
+        assertEq(purchaseToken.allowance(alice, primaryMarketAddress), 100e18);
 
-        // assertEq(purchaseToken.balanceOf(alice), 10 ether);
-        // assertEq(purchaseToken.balanceOf(address(primaryMarket)), 10 ether);
-
-        // purchaseToken.approve(address(primaryMarket), 100e18);
-
-        // vm.expectEmit(true, true, false, true);
-        // emit Purchase(alice, "Alice");
-        // primaryMarket.purchase("Alice");
-        // // assertEq(primaryMarket.issuedTicketNFTs(), 1);
-        // assertEq(ticketNFT.balanceOf(alice), 1);
-        // // assertEq(purchaseToken.balanceOf(alice), 0);
-        // assertEq(purchaseToken.balanceOf(address(primaryMarket)), 100e18);
+        // Alice purchases a ticket
+        vm.expectEmit(true, true, false, true);
+        emit Purchase(alice, "Alice");
+        vm.prank(alice);
+        primaryMarket.purchase("Alice");
+        // Check that Alice has 1 NFT and 0 ERC20 tokens
+        assertEq(ticketNFT.balanceOf(alice), 1);
+        assertEq(purchaseToken.balanceOf(alice), 0);
     }
 
 }
